@@ -53,9 +53,10 @@ tel.traineddata
 test-pdf.mjs
 test-pdf2.mjs
 
-# consolidated SQL exports (migrations in supabase/migrations/ are canonical)
+# SQL migrations (schema managed directly in Supabase)
 /supabase-migration.sql
 /supabase-storage.sql
+/supabase/migrations/*.sql
 
 # default Next.js starter assets (not used)
 /public/next.svg
