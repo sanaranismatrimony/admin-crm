@@ -190,10 +190,56 @@ export async function getSiblings(profileId: string) {
   return data as Sibling[];
 }
 
+export async function getProfileDeleteInfo(id: string) {
+  await requireAdmin();
+  const supabase = await db();
+
+  const { data: profile } = await supabase.from('profiles').select('full_name, photo_urls').eq('id', id).single();
+  if (!profile) throw new Error('Profile not found');
+
+  const { data: matches, count: matchCount } = await supabase
+    .from('matches')
+    .select(`
+      id,
+      bride:profiles!matches_bride_profile_id_fkey(id, full_name),
+      groom:profiles!matches_groom_profile_id_fkey(id, full_name)
+    `, { count: 'exact', head: false })
+    .or(`bride_profile_id.eq.${id},groom_profile_id.eq.${id}`);
+
+  const { count: shareCount } = await supabase
+    .from('profile_shares')
+    .select('*', { count: 'exact', head: true })
+    .eq('profile_id', id);
+
+  const { count: siblingCount } = await supabase
+    .from('siblings')
+    .select('*', { count: 'exact', head: true })
+    .eq('profile_id', id);
+
+  const matchPartners = (matches || []).map((m: any) => {
+    const partner = m.bride?.id === id ? m.groom : m.bride;
+    return partner?.full_name || 'Unknown';
+  }).filter(Boolean);
+
+  return {
+    fullName: profile.full_name,
+    photoCount: (profile.photo_urls || []).length,
+    matches: matchPartners,
+    shareCount: shareCount || 0,
+    siblingCount: siblingCount || 0,
+  };
+}
+
 export async function deleteProfile(id: string) {
   await requireAdmin();
   const supabase = await db();
-  await supabase.from('siblings').delete().eq('profile_id', id);
+
+  // Clean up photos from storage before deleting
+  const { data: profile } = await supabase.from('profiles').select('photo_urls').eq('id', id).single();
+  if (profile?.photo_urls && profile.photo_urls.length > 0) {
+    await deleteProfilePhotos(profile.photo_urls);
+  }
+
   const { error } = await supabase.from('profiles').delete().eq('id', id);
   if (error) throw new Error(error.message);
 }
