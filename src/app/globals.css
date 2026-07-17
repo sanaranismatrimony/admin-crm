@@ -33,6 +33,7 @@
 
 html {
   scroll-behavior: smooth;
+  /* data-scroll-behavior="smooth" on <html> to satisfy Next.js route transition requirements */
 }
 
 body {
