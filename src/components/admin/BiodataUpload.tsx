@@ -7,7 +7,7 @@ import { BiodataReviewPanel } from './BiodataReviewPanel';
 import type { ExtractionResult, ExtractStage } from '@/types';
 
 interface ExtractionMeta {
-  source: 'cache' | 'rules' | 'groq' | 'merged';
+  source: 'cache' | 'rules' | 'groq' | 'merged' | 'vision';
   confidence: { overall: number; percentage: number; meetsThreshold: boolean };
   warnings: { field: string; severity: string; message: string }[];
 }
@@ -29,6 +29,7 @@ const sourceConfig: Record<string, { label: string; icon: typeof Zap; color: str
   rules: { label: 'Rules', icon: Cpu, color: 'text-[var(--green)]' },
   groq: { label: 'AI', icon: Brain, color: 'text-purple-500' },
   merged: { label: 'Rules + AI', icon: Brain, color: 'text-amber-500' },
+  vision: { label: 'Vision AI', icon: Brain, color: 'text-purple-500' },
 };
 
 export function BiodataUpload({ onExtracted }: BiodataUploadProps) {

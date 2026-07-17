@@ -22,7 +22,7 @@ export interface ExtractionPipelineResult {
   result: ExtractionResult;
   normalized: NormalizedResult;
   confidence: { overall: number; percentage: number; meetsThreshold: boolean };
-  source: 'cache' | 'rules' | 'groq' | 'merged';
+  source: 'cache' | 'rules' | 'groq' | 'merged' | 'vision';
   warnings: ValidationWarning[];
   mergeLog?: { field: string; source: 'rules' | 'groq' | 'both'; conflict?: string }[];
 }
@@ -58,6 +58,29 @@ export async function extractBiodata(
 
   const extracted = await extractText(buffer, mimeType, fileName);
   const cleaned = cleanText(extracted.text);
+
+  // Direct vision result (images): skip rules + text-Groq pipeline entirely
+  if (extracted.directResult) {
+    const visionResult = extracted.directResult;
+    const normalized = normalizeExtraction(visionResult);
+    const scored = scoreConfidence(visionResult);
+    const warnings = validateExtraction(visionResult);
+
+    const finalResult = { ...visionResult, raw_text: cleaned };
+    setCached(fileHash, finalResult);
+
+    return {
+      result: finalResult,
+      normalized,
+      confidence: {
+        overall: scored.overall,
+        percentage: scored.percentage,
+        meetsThreshold: scored.percentage >= threshold,
+      },
+      source: 'vision',
+      warnings,
+    };
+  }
 
   const rulesResult = ruleExtract(cleaned);
   const rulesScore = scoreConfidence(rulesResult);

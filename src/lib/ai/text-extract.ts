@@ -1,4 +1,4 @@
-import type { ExtractedField } from '@/types';
+import type { ExtractionResult, ExtractedField } from '@/types';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
@@ -12,6 +12,7 @@ export class ExtractionError extends Error {
 interface TextExtractionResult {
   text: string;
   isScanned: boolean;
+  directResult?: ExtractionResult;
 }
 
 export async function extractText(
@@ -82,11 +83,17 @@ async function extractFromImage(buffer: ArrayBuffer, ext: string, mimeType: stri
     }
   }
 
-  // Fallback: use Groq vision
+  // Use Groq vision for direct structured extraction (bypasses OCR → rules → text-Groq pipeline)
   try {
-    const { ocrWithGroqVision } = await import('./groq');
-    const text = await ocrWithGroqVision(buffer, mimeType);
-    if (text) return { text, isScanned: true };
+    const { extractWithGroqVision } = await import('./groq');
+    const result = await extractWithGroqVision(buffer, mimeType);
+    if (result && result.field_count > 0) {
+      const text = Object.values(result.fields)
+        .filter(f => f.value !== null)
+        .map(f => String(f.value))
+        .join(' ');
+      return { text, isScanned: true, directResult: result };
+    }
   } catch {
   }
 

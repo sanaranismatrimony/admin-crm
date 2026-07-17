@@ -175,10 +175,10 @@ function parseResponse(text: string): ExtractionResult {
   return result;
 }
 
-export async function ocrWithGroqVision(
+export async function extractWithGroqVision(
   buffer: ArrayBuffer,
   mimeType: string,
-): Promise<string> {
+): Promise<ExtractionResult> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new Error('GROQ_API_KEY is not configured');
@@ -203,10 +203,7 @@ export async function ocrWithGroqVision(
           {
             role: 'user',
             content: [
-              {
-                type: 'text',
-                text: 'Extract ALL visible text from this image exactly as written. Return only the extracted text, nothing else.',
-              },
+              { type: 'text', text: 'Extract matrimonial biodata fields from this image and return JSON.' },
               { type: 'image_url', image_url: { url: dataUri } },
             ],
           },
@@ -229,7 +226,7 @@ export async function ocrWithGroqVision(
       throw new Error('Groq vision returned an empty response');
     }
 
-    return content.trim();
+    return parseResponse(content);
   } finally {
     clearTimeout(timeout);
   }
