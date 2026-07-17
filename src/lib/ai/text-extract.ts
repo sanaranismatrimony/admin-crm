@@ -72,19 +72,30 @@ async function extractFromPdf(buffer: ArrayBuffer): Promise<TextExtractionResult
 
 async function extractFromImage(buffer: ArrayBuffer, ext: string, mimeType: string): Promise<TextExtractionResult> {
   try {
-    const { sep } = await import('node:path');
-    const Tesseract = await import('tesseract.js');
-    const workerPath = process.cwd() + sep + 'node_modules' + sep + 'tesseract.js' + sep + 'src' + sep + 'worker-script' + sep + 'node' + sep + 'index.js';
-    const { data } = await Tesseract.recognize(Buffer.from(buffer), 'eng+tel', {
-      workerPath,
-      logger: () => {},
-    });
-    const text = (data.text || '').trim();
+    const text = await tesseractOcr(buffer);
     if (text) return { text, isScanned: true };
-    return { text: '', isScanned: true };
   } catch {
-    return { text: '', isScanned: true };
   }
+
+  try {
+    const { ocrWithGroqVision } = await import('./groq');
+    const text = await ocrWithGroqVision(buffer, mimeType);
+    if (text) return { text, isScanned: true };
+  } catch {
+  }
+
+  return { text: '', isScanned: true };
+}
+
+async function tesseractOcr(buffer: ArrayBuffer): Promise<string> {
+  const { sep } = await import('node:path');
+  const Tesseract = await import('tesseract.js');
+  const workerPath = process.cwd() + sep + 'node_modules' + sep + 'tesseract.js' + sep + 'src' + sep + 'worker-script' + sep + 'node' + sep + 'index.js';
+  const { data } = await Tesseract.recognize(Buffer.from(buffer), 'eng+tel', {
+    workerPath,
+    logger: () => {},
+  });
+  return (data.text || '').trim();
 }
 
 export function strField(value: string | null | undefined, confidence: 'high' | 'medium' | 'low' = 'medium'): ExtractedField<string> {

@@ -175,6 +175,58 @@ function parseResponse(text: string): ExtractionResult {
   return result;
 }
 
+export async function ocrWithGroqVision(
+  buffer: ArrayBuffer,
+  mimeType: string,
+): Promise<string> {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    throw new Error('GROQ_API_KEY is not configured');
+  }
+
+  const base64 = Buffer.from(buffer).toString('base64');
+  const dataUri = `${mimeType};base64,${base64}`;
+
+  const response = await fetch(GROQ_API_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: process.env.GROQ_VISION_MODEL || 'llama-3.2-90b-vision-preview',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Extract ALL visible text from this image exactly as written. Return only the extracted text, nothing else.',
+            },
+            { type: 'image_url', image_url: { url: dataUri } },
+          ],
+        },
+      ],
+      temperature: 0.1,
+      max_tokens: 4096,
+    }),
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Groq vision API error (${response.status}): ${body.substring(0, 200)}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+
+  if (!content) {
+    throw new Error('Groq vision returned an empty response');
+  }
+
+  return content.trim();
+}
+
 export async function extractWithGroq(text: string): Promise<ExtractionResult> {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
