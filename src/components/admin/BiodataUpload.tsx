@@ -72,7 +72,21 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
 
       setStage('extracting');
 
-      const json = await res.json();
+      let json: any;
+      try {
+        json = await res.json();
+      } catch {
+        const text = await res.text();
+        if (res.status === 504 || text.includes('timed out')) {
+          setError('The server took too long to process the image. Try a smaller file or a compressed image.');
+        } else if (text.includes('502') || text.includes('bad gateway')) {
+          setError('Server temporarily unavailable. Please try again.');
+        } else {
+          setError(`Server error (${res.status}). Please try again with a different file.`);
+        }
+        setStage('error');
+        return;
+      }
 
       if (!res.ok) {
         const msg = json.error || 'Failed to parse biodata';

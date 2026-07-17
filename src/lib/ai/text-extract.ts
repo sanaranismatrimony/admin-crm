@@ -70,13 +70,19 @@ async function extractFromPdf(buffer: ArrayBuffer): Promise<TextExtractionResult
   }
 }
 
+const isVercel = !!process.env.VERCEL;
+
 async function extractFromImage(buffer: ArrayBuffer, ext: string, mimeType: string): Promise<TextExtractionResult> {
-  try {
-    const text = await tesseractOcr(buffer);
-    if (text) return { text, isScanned: true };
-  } catch {
+  // Tesseract.js doesn't work on Vercel (WASM/traineddata unavailable), skip it
+  if (!isVercel) {
+    try {
+      const text = await tesseractOcr(buffer);
+      if (text) return { text, isScanned: true };
+    } catch {
+    }
   }
 
+  // Fallback: use Groq vision
   try {
     const { ocrWithGroqVision } = await import('./groq');
     const text = await ocrWithGroqVision(buffer, mimeType);
