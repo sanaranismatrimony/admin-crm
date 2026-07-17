@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sana Rani Matrimony — Admin CRM
 
-## Getting Started
+A matrimonial CRM for Kalinga Vysya community matchmaking. Built with Next.js 16, Supabase, and AI-powered biodata extraction.
 
-First, run the development server:
+## Features
+
+- **Admin Dashboard** — Manage profiles, matches, payments, and shares
+- **Biodata AI Extraction** — Upload PDF/DOCX/Images; auto-fills form via rule-based + Groq AI extraction
+- **Match Pipeline** — Track stages from profile sharing to marriage confirmation
+- **Profile Management** — Full CRUD with 10-section form (personal, astro, family, education, preferences)
+- **Photo Management** — Upload via Supabase Storage with lightbox preview
+- **Biodata Card** — Auto-generated PDF biodata card for sharing
+- **Public Profile View** — Token-based shareable profile view with interest action
+
+## Prerequisites
+
+- Node.js >= 18
+- Supabase project (Postgres + Auth + Storage)
+- Groq API key (for AI extraction — optional, falls back to rules-only)
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1. Install dependencies
+npm install
+
+# 2. Set environment variables
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Edit `.env.local` with your Supabase and Groq credentials:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `GROQ_API_KEY` | Groq API key for AI extraction |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 3. Run database migrations
+# Run each file in supabase/migrations/ via Supabase SQL editor
 
-## Learn More
+# 4. Start dev server
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (Turbopack) |
+| `npm run build` | Production build |
+| `npm start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech Stack
 
-## Deploy on Vercel
+- **Framework** — Next.js 16 (App Router, Turbopack, Server Actions)
+- **Database** — Supabase (Postgres + Auth + Storage)
+- **AI Extraction** — pdf-parse, mammoth, Tesseract.js, Groq (openai/gpt-oss-120b)
+- **Forms** — react-hook-form + Zod validation
+- **PDF Gen** — @react-pdf/renderer
+- **UI** — Tailwind CSS, Framer Motion, Lucide icons
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── admin/              # Admin dashboard, profiles, matches, payments
+│   ├── api/                # API routes (biodata, parse, upload, generate-card)
+│   └── view/               # Public profile view (token-based)
+├── components/
+│   ├── admin/              # Admin UI components
+│   ├── pdf/                # PDF biodata card & certificate
+│   └── ui/                 # Reusable UI primitives
+├── lib/
+│   ├── ai/                 # Biodata extraction pipeline
+│   ├── auth/               # Auth actions & middleware
+│   ├── db/                 # Database queries
+│   ├── supabase/           # Supabase client config
+│   ├── utils/              # Utilities
+│   └── validation/         # Zod schemas
+└── types/                  # TypeScript types
+```
+
+## Database
+
+Migrations are in `supabase/migrations/`. Run each file sequentially in the Supabase SQL editor. The schema includes:
+
+- `profiles` — Biodata with 45+ fields (personal, astro, family, education, preferences)
+- `matches` — Match pipeline with stage tracking
+- `payments` — Payment records
+- `families` — Family contact log
+- `profile_shares` — Share tokens with interest tracking
+- `profile_views` — View analytics

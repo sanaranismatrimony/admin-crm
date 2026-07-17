@@ -1,5 +1,5 @@
 {
-  "name": "matrimony-crm",
+  "name": "sana-rani-matrimony",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,15 +9,31 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "@react-pdf/renderer": "^4.5.1",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.1",
+    "framer-motion": "^12.42.2",
+    "lucide-react": "^1.23.0",
+    "mammoth": "^1.12.0",
     "next": "16.2.10",
+    "pdf-parse": "^1.1.1",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-dropzone": "^15.0.0",
+    "react-hook-form": "^7.81.0",
+    "react-icons": "^5.7.0",
+    "sonner": "^2.0.7",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^14.0.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",

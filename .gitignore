@@ -39,3 +39,29 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local IDE / AI config
+opencode.json
+CLAUDE.md
+AGENTS.md
+
+# Tesseract OCR training data (downloaded at runtime)
+eng.traineddata
+tel.traineddata
+
+# test scripts (not for production)
+test-pdf.mjs
+test-pdf2.mjs
+
+# consolidated SQL exports (migrations in supabase/migrations/ are canonical)
+/supabase-migration.sql
+/supabase-storage.sql
+
+# default Next.js starter assets (not used)
+/public/next.svg
+/public/vercel.svg
+/public/file.svg
+/public/window.svg
+
+# draft proxy middleware (superseded by root proxy.ts)
+/src/proxy.ts
