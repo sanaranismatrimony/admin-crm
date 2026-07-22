@@ -1,12 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Users, Share2, HeartHandshake, Wallet, Activity, Pause, UserCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+
+const iconMap: Record<string, LucideIcon> = {
+  Users, Share2, HeartHandshake, Wallet, Activity, Pause, UserCheck,
+};
 
 interface Stat {
   label: string;
   value: number;
-  icon: LucideIcon;
+  icon: string;
   color: string;
   bg: string;
 }
@@ -40,34 +45,37 @@ export function StatsGrid({ stats }: { stats: Stat[] }) {
       animate="show"
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
     >
-      {stats.map((stat) => (
-        <motion.div
-          key={stat.label}
-          variants={item}
-          whileHover={{ y: -3, transition: { duration: 0.2 } }}
-          className="rounded-2xl border p-5 transition-all duration-200 cursor-default"
-          style={{
-            background: 'var(--bg-card)',
-            borderColor: 'var(--border-default)',
-            boxShadow: 'var(--shadow-card)',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-elevated)'; }}
-          onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card)'; }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
-              <AnimatedCounter value={stat.value} />
+      {stats.map((stat) => {
+        const Icon = iconMap[stat.icon];
+        return (
+          <motion.div
+            key={stat.label}
+            variants={item}
+            whileHover={{ y: -3, transition: { duration: 0.2 } }}
+            className="rounded-2xl border p-5 transition-all duration-200 cursor-default"
+            style={{
+              background: 'var(--bg-card)',
+              borderColor: 'var(--border-default)',
+              boxShadow: 'var(--shadow-card)',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-elevated)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = 'var(--shadow-card)'; }}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
+                <AnimatedCounter value={stat.value} />
+              </div>
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-200"
+                style={{ background: stat.bg }}
+              >
+                {Icon && <Icon className="w-7 h-7" style={{ color: stat.color }} />}
+              </div>
             </div>
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-200"
-              style={{ background: stat.bg }}
-            >
-              <stat.icon className="w-7 h-7" style={{ color: stat.color }} />
-            </div>
-          </div>
-        </motion.div>
-      ))}
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }

@@ -1,9 +1,4 @@
 import { createServerSupabase } from '@/lib/supabase/server';
-import { Card, CardContent } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import Link from 'next/link';
-import { Users, Share2, HeartHandshake, Wallet, Activity, Pause, UserCheck } from 'lucide-react';
-import { stageLabel, stageBadgeVariant } from '@/lib/utils/format';
 import { StatsGrid } from './StatsGrid';
 import { DashboardLists } from './DashboardLists';
 
@@ -19,8 +14,7 @@ export default async function DashboardPage() {
   const meetingStages = ['first_meeting', 'second_meeting', 'final_meeting'];
 
   const [
-    profileCount,
-    shareCount,
+    profileCount,,
     matchFixedCount,
     paymentPendingCount,
   ] = await Promise.all([
@@ -46,12 +40,12 @@ export default async function DashboardPage() {
     .in('stage', meetingStages);
 
   const stats = [
-    { label: 'Total Profiles', value: profileCount.count || 0, icon: Users, color: 'var(--gold)', bg: 'rgba(212,168,83,0.12)' },
-    { label: 'Active Matches', value: activeMatchesCount || 0, icon: Activity, color: 'var(--amber)', bg: 'rgba(217,119,6,0.12)' },
-    { label: 'In Meetings', value: meetingCount || 0, icon: UserCheck, color: 'var(--blue)', bg: 'rgba(37,99,235,0.12)' },
-    { label: 'Match Fixed', value: matchFixedCount.count || 0, icon: HeartHandshake, color: 'var(--green)', bg: 'rgba(22,163,74,0.12)' },
-    { label: 'On Hold', value: onHoldCount || 0, icon: Pause, color: 'var(--amber)', bg: 'rgba(217,119,6,0.12)' },
-    { label: 'Pending Payments', value: paymentPendingCount.count || 0, icon: Wallet, color: 'var(--red)', bg: 'rgba(220,38,38,0.12)' },
+    { label: 'Total Profiles', value: profileCount.count || 0, icon: 'Users', color: 'var(--gold)', bg: 'rgba(212,168,83,0.12)' },
+    { label: 'Active Matches', value: activeMatchesCount || 0, icon: 'Activity', color: 'var(--amber)', bg: 'rgba(217,119,6,0.12)' },
+    { label: 'In Meetings', value: meetingCount || 0, icon: 'UserCheck', color: 'var(--blue)', bg: 'rgba(37,99,235,0.12)' },
+    { label: 'Match Fixed', value: matchFixedCount.count || 0, icon: 'HeartHandshake', color: 'var(--green)', bg: 'rgba(22,163,74,0.12)' },
+    { label: 'On Hold', value: onHoldCount || 0, icon: 'Pause', color: 'var(--amber)', bg: 'rgba(217,119,6,0.12)' },
+    { label: 'Pending Payments', value: paymentPendingCount.count || 0, icon: 'Wallet', color: 'var(--red)', bg: 'rgba(220,38,38,0.12)' },
   ];
 
   const { data: recentProfiles } = await supabase
