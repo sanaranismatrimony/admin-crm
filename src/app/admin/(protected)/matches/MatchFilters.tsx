@@ -62,16 +62,21 @@ export function MatchFilters({ currentStage, currentSearch }: MatchFiltersProps)
       </div>
       <form onSubmit={handleSearch} className="flex items-center gap-2 flex-1 max-w-xs">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gray-400)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
           <input
             type="text"
             name="search"
             defaultValue={currentSearch}
             placeholder="Search by name..."
-            className="w-full rounded-xl border border-[var(--gray-200)] pl-10 pr-4 py-2 text-sm text-[var(--brown)] bg-white placeholder:text-[var(--gray-400)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40 focus:border-[var(--gold)]"
+            className="w-full rounded-xl border pl-10 pr-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40 focus:border-[var(--gold)]"
+            style={{
+              background: 'var(--bg-input)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border-input)',
+            }}
           />
         </div>
-        <button type="submit" className="text-sm text-[var(--gold-dark)] font-medium hover:underline">
+        <button type="submit" className="text-sm font-medium hover:underline" style={{ color: 'var(--gold-dark)' }}>
           Search
         </button>
       </form>

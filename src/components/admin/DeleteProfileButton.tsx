@@ -1,124 +1,90 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Trash2, AlertTriangle, Users, Share2, Image, Link2 } from 'lucide-react';
+import { useState, useTransition } from 'react';
+import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { deleteProfile, getProfileDeleteInfo } from '@/lib/db/profiles';
+import { useRouter } from 'next/navigation';
 
 interface DeleteProfileButtonProps {
   profileId: string;
 }
 
-interface DeleteInfo {
-  fullName: string | null;
-  photoCount: number;
-  matches: string[];
-  shareCount: number;
-  siblingCount: number;
-}
-
 export function DeleteProfileButton({ profileId }: DeleteProfileButtonProps) {
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [deleteInfo, setDeleteInfo] = useState<{ fullName: string; photoCount: number; matches: string[]; shareCount: number; siblingCount: number } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(false);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState<DeleteInfo | null>(null);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  async function openDialog() {
-    setShowConfirm(true);
-    setFetching(true);
-    setError('');
-    try {
-      const data = await getProfileDeleteInfo(profileId);
-      setInfo(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load profile info');
-    } finally {
-      setFetching(false);
-    }
-  }
-
-  async function handleDelete() {
+  async function handleOpen() {
+    setIsOpen(true);
     setLoading(true);
-    setError('');
     try {
-      await deleteProfile(profileId);
-      router.push('/admin/profiles');
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete profile');
+      const info = await getProfileDeleteInfo(profileId);
+      setDeleteInfo(info);
+    } catch {
+      setDeleteInfo({ fullName: '', photoCount: 0, matches: [], shareCount: 0, siblingCount: 0 });
+    } finally {
       setLoading(false);
     }
   }
 
-  const hasRelated = info && (info.matches.length > 0 || info.shareCount > 0 || info.siblingCount > 0 || info.photoCount > 0);
+  function handleDelete() {
+    startTransition(async () => {
+      try {
+        await deleteProfile(profileId);
+        setIsOpen(false);
+        router.push('/admin/profiles');
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete profile');
+      }
+    });
+  }
 
   return (
     <>
-      <Button variant="danger" size="sm" onClick={openDialog}>
-        <Trash2 className="w-4 h-4" />
+      <Button variant="outline" size="sm" onClick={handleOpen}>
+        <Trash2 className="w-4 h-4" /> Delete
       </Button>
 
-      <Modal isOpen={showConfirm} onClose={() => { if (!loading) setShowConfirm(false); }} title="Delete Profile" maxWidth="max-w-md">
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Delete Profile" maxWidth="max-w-md">
         <div className="space-y-4">
-          {fetching ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="w-6 h-6 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
+          <div
+            className="flex items-start gap-3 p-4 rounded-xl"
+            style={{ background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.15)' }}
+          >
+            <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: 'var(--red)' }} />
+            <div>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                This action cannot be undone
+              </p>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                This will permanently delete this profile and all associated data.
+              </p>
             </div>
-          ) : (
-            <>
-              <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200">
-                <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-red-700">Permanently delete {info?.fullName || 'this profile'}?</p>
-                  <p className="text-xs text-red-600 mt-1">This action cannot be undone. All associated data will be permanently removed.</p>
-                </div>
-              </div>
+          </div>
 
-              {info && hasRelated && (
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-[var(--gray-500)] uppercase tracking-wide">The following will also be deleted:</p>
-                  <div className="space-y-1.5">
-                    {info.matches.length > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--brown-mid)]">
-                        <Link2 className="w-4 h-4 text-[var(--gray-400)] flex-shrink-0" />
-                        <span><strong>{info.matches.length}</strong> match{info.matches.length !== 1 ? 'es' : ''} with: {info.matches.join(', ')}</span>
-                      </div>
-                    )}
-                    {info.shareCount > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--brown-mid)]">
-                        <Share2 className="w-4 h-4 text-[var(--gray-400)] flex-shrink-0" />
-                        <span><strong>{info.shareCount}</strong> share{info.shareCount !== 1 ? 's' : ''}</span>
-                      </div>
-                    )}
-                    {info.siblingCount > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--brown-mid)]">
-                        <Users className="w-4 h-4 text-[var(--gray-400)] flex-shrink-0" />
-                        <span><strong>{info.siblingCount}</strong> sibling{info.siblingCount !== 1 ? 's' : ''}</span>
-                      </div>
-                    )}
-                    {info.photoCount > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-[var(--brown-mid)]">
-                        <Image className="w-4 h-4 text-[var(--gray-400)] flex-shrink-0" />
-                        <span><strong>{info.photoCount}</strong> photo{info.photoCount !== 1 ? 's' : ''}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+          {loading ? (
+            <div className="flex items-center justify-center py-4">
+              <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--text-muted)' }} />
+            </div>
+          ) : deleteInfo && (deleteInfo.matches.length > 0 || deleteInfo.shareCount > 0) ? (
+            <div className="p-3 rounded-xl text-sm" style={{ background: 'var(--gray-50)', color: 'var(--text-secondary)' }}>
+              <p>This profile has:</p>
+              <ul className="mt-1 space-y-0.5">
+                {deleteInfo.matches.length > 0 && <li>\u2022 {deleteInfo.matches.length} match{deleteInfo.matches.length !== 1 ? 'es' : ''}</li>}
+                {deleteInfo.shareCount > 0 && <li>\u2022 {deleteInfo.shareCount} share{deleteInfo.shareCount !== 1 ? 's' : ''}</li>}
+              </ul>
+              <p className="mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>All related data will be permanently deleted.</p>
+            </div>
+          ) : null}
 
-              {error && (
-                <div className="p-3 rounded-xl bg-red-50 text-sm text-[var(--red)] border border-red-200">{error}</div>
-              )}
-
-              <div className="flex gap-3 pt-2">
-                <Button variant="ghost" className="flex-1" onClick={() => setShowConfirm(false)} disabled={loading}>Cancel</Button>
-                <Button variant="danger" className="flex-1" loading={loading} onClick={handleDelete}>Delete Permanently</Button>
-              </div>
-            </>
-          )}
+          <div className="flex justify-end gap-2">
+            <Button variant="ghost" onClick={() => setIsOpen(false)}>Cancel</Button>
+            <Button variant="danger" loading={isPending} onClick={handleDelete}>Delete Profile</Button>
+          </div>
         </div>
       </Modal>
     </>

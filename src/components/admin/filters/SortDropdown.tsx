@@ -27,7 +27,12 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
       trigger={
         <button
           type="button"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium border border-[var(--gray-200)] bg-white text-[var(--gray-500)] hover:border-[var(--gray-300)] hover:text-[var(--gray-700)] transition-all"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium border transition-all"
+          style={{
+            background: 'var(--bg-card)',
+            borderColor: 'var(--border-input)',
+            color: 'var(--text-muted)',
+          }}
         >
           <ArrowUpDown className="w-3.5 h-3.5" />
           {currentLabel}

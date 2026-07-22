@@ -24,7 +24,10 @@ export const profileSchema = z.object({
   age: z.coerce.number().int().min(18, 'Age must be at least 18').max(100, 'Age must be at most 100'),
   height_feet: z.coerce.number().int().min(1).max(8),
   height_inches: z.coerce.number().int().min(0).max(11),
-  weight: z.coerce.number().int().min(20).max(200).optional().default(0),
+  weight: z.preprocess(
+    (v) => (v === '' || v === null || v === undefined) ? undefined : v,
+    z.coerce.number().int().min(20).max(200).optional()
+  ),
 
   caste: z.string(),
   gotram: z.string().min(1, 'Gotram is required'),

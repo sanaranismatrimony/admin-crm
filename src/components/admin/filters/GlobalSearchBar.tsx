@@ -34,20 +34,26 @@ export function GlobalSearchBar({ value, onChange, suggestions, onSelectSuggesti
 
   return (
     <div ref={ref} className="relative flex-1 max-w-lg">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--gray-400)]" />
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'var(--text-muted)' }} />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         placeholder="Search profiles across name, ID, phone, location, family..."
-        className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-[var(--gray-200)] bg-white text-sm text-[var(--brown)] placeholder:text-[var(--gray-400)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40 focus:border-[var(--gold)] transition-all"
+        className="w-full pl-10 pr-9 py-2.5 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/40 focus:border-[var(--gold)]"
+        style={{
+          background: 'var(--bg-input)',
+          color: 'var(--text-primary)',
+          borderColor: 'var(--border-input)',
+        }}
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange('')}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--gray-400)] hover:text-[var(--gray-600)] transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+          style={{ color: 'var(--text-muted)' }}
         >
           <X className="w-4 h-4" />
         </button>
@@ -59,7 +65,12 @@ export function GlobalSearchBar({ value, onChange, suggestions, onSelectSuggesti
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.12 }}
-            className="absolute top-full left-0 right-0 mt-1.5 bg-white rounded-xl shadow-lg border border-[var(--gray-200)] overflow-hidden z-50"
+            className="absolute top-full left-0 right-0 mt-1.5 rounded-xl border overflow-hidden z-50"
+            style={{
+              background: 'var(--bg-card)',
+              borderColor: 'var(--border-default)',
+              boxShadow: 'var(--shadow-lg)',
+            }}
           >
             {suggestions.map((s) => (
               <button
@@ -69,13 +80,16 @@ export function GlobalSearchBar({ value, onChange, suggestions, onSelectSuggesti
                   onSelectSuggestion(s);
                   setFocused(false);
                 }}
-                className="w-full text-left px-4 py-2.5 text-sm text-[var(--gray-600)] hover:bg-[var(--gray-50)] transition-colors flex items-center justify-between gap-3"
+                className="w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between gap-3"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--gray-100)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
               >
                 <div className="min-w-0">
-                  <span className="font-medium text-[var(--brown)]">{s.full_name}</span>
-                  <span className="ml-2 text-[11px] font-mono text-[var(--gray-400)]">{s.profile_id}</span>
+                  <span className="font-medium" style={{ color: 'var(--text-primary)' }}>{s.full_name}</span>
+                  <span className="ml-2 text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>{s.profile_id}</span>
                 </div>
-                <div className="flex items-center gap-3 flex-shrink-0 text-xs text-[var(--gray-400)]">
+                <div className="flex items-center gap-3 flex-shrink-0 text-xs" style={{ color: 'var(--text-muted)' }}>
                   {s.age > 0 && <span>{s.age} yrs</span>}
                   {s.city && <span>{s.city}</span>}
                 </div>

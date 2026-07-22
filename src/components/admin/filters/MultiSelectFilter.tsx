@@ -38,13 +38,18 @@ export function MultiSelectFilter({
   return (
     <div className="space-y-1">
       <div className="relative">
-        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--gray-400)]" />
+        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5" style={{ color: 'var(--text-muted)' }} />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-8 pr-3 py-2 rounded-lg border border-[var(--gray-200)] text-xs text-[var(--brown)] bg-white placeholder:text-[var(--gray-400)] focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/30 focus:border-[var(--gold)]"
+          className="w-full pl-8 pr-3 py-2 rounded-lg border text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--gold)]/30 focus:border-[var(--gold)]"
+          style={{
+            background: 'var(--bg-input)',
+            color: 'var(--text-primary)',
+            borderColor: 'var(--border-input)',
+          }}
         />
       </div>
       <div className="max-h-48 overflow-y-auto space-y-0.5">
@@ -58,7 +63,7 @@ export function MultiSelectFilter({
             />
           ))
         ) : (
-          <p className="text-xs text-[var(--gray-400)] text-center py-3">{emptyText}</p>
+          <p className="text-xs text-center py-3" style={{ color: 'var(--text-muted)' }}>{emptyText}</p>
         )}
       </div>
     </div>

@@ -21,13 +21,13 @@ export function Checkbox({ checked, onChange, label, id }: CheckboxProps) {
         className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
           checked
             ? 'bg-[var(--gold)] border-[var(--gold)]'
-            : 'border-[var(--gray-300)] group-hover:border-[var(--gold)]'
+            : 'border-[var(--border-input)] group-hover:border-[var(--gold)]'
         }`}
       >
         {checked && <Check className="w-3 h-3 text-white stroke-[3]" />}
       </div>
       {label && (
-        <span className="text-sm text-[var(--gray-600)] select-none">{label}</span>
+        <span className="text-sm select-none" style={{ color: 'var(--text-secondary)' }}>{label}</span>
       )}
       <input
         id={checkboxId}

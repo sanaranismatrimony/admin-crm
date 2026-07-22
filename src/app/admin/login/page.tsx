@@ -26,19 +26,27 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--cream)] flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--bg-page)' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-20 h-20 mx-auto mb-4">
             <img src="/logo.svg" alt="Sana Rani Matrimony" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-semibold text-[var(--brown)]">Admin Login</h1>
-          <p className="text-sm text-[var(--gray-400)] mt-1">Sana Rani Matrimony</p>
+          <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Admin Login</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Sana Rani Matrimony</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--gray-100)] space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="rounded-2xl p-6 space-y-4"
+          style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-default)',
+            boxShadow: 'var(--shadow-lg)',
+          }}
+        >
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 text-sm text-[var(--red)]">{error}</div>
+            <div className="p-3 rounded-xl text-sm" style={{ background: 'rgba(220,38,38,0.08)', color: 'var(--red)' }}>{error}</div>
           )}
 
           <Input

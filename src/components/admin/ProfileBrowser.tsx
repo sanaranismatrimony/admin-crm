@@ -180,12 +180,14 @@ export function ProfileBrowser({
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-4">
-        <GlobalSearchBar
-          value={q}
-          onChange={setQ}
-          suggestions={suggestions}
-          onSelectSuggestion={handleSelectSuggestion}
-        />
+        <div className="flex-1">
+          <GlobalSearchBar
+            value={q}
+            onChange={setQ}
+            suggestions={suggestions}
+            onSelectSuggestion={handleSelectSuggestion}
+          />
+        </div>
         <Link href="/admin/profiles/new">
           <Button>
             <Plus className="w-4 h-4" /> Add Profile
@@ -239,14 +241,7 @@ export function ProfileBrowser({
         onClearAll={clearAllFilters}
       />
 
-      <div className="relative min-h-[200px]">
-        {loading && (
-          <div className="absolute inset-0 bg-white/60 z-10 flex items-center justify-center rounded-xl">
-            <Loader2 className="w-6 h-6 text-[var(--gold)] animate-spin" />
-          </div>
-        )}
-        <ProfileGrid profiles={profiles} searchTerm={debouncedQ} />
-      </div>
+      <ProfileGrid profiles={profiles} searchTerm={debouncedQ} loading={loading} />
 
       <Pagination page={page} pageCount={pageCount} total={total} onPageChange={(p) => { setPage(p); }} />
     </div>

@@ -27,20 +27,18 @@ interface ProfileMatchHistoryProps {
   matches: MatchWithProfiles[];
 }
 
-
-
 export function ProfileMatchHistory({ profileId, matches }: ProfileMatchHistoryProps) {
   if (!matches || matches.length === 0) {
     return (
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <HeartHandshake className="w-4 h-4 text-[var(--gray-400)]" />
-            <h3 className="text-sm font-semibold text-[var(--brown)] tracking-wide">Match History</h3>
+            <HeartHandshake className="w-4 h-4" style={{ color: 'var(--text-muted)' }} />
+            <h3 className="text-sm font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>Match History</h3>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-[var(--gray-400)] text-center py-4">No match history yet</p>
+          <p className="text-sm text-center py-4" style={{ color: 'var(--text-muted)' }}>No match history yet</p>
         </CardContent>
       </Card>
     );
@@ -58,15 +56,15 @@ export function ProfileMatchHistory({ profileId, matches }: ProfileMatchHistoryP
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <HeartHandshake className="w-4 h-4 text-[var(--gold)]" />
-          <h3 className="text-sm font-semibold text-[var(--brown)] tracking-wide">Match History</h3>
-          <span className="text-xs text-[var(--gray-400)] ml-auto">{matches.length} total</span>
+          <HeartHandshake className="w-4 h-4" style={{ color: 'var(--gold)' }} />
+          <h3 className="text-sm font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>Match History</h3>
+          <span className="text-xs ml-auto" style={{ color: 'var(--text-muted)' }}>{matches.length} total</span>
         </div>
       </CardHeader>
       <CardContent>
         {outgoing.length > 0 && (
           <div className="mb-4">
-            <p className="text-xs font-medium text-[var(--gray-400)] uppercase tracking-wider mb-2">Shared to Others</p>
+            <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Shared to Others</p>
             <div className="space-y-2">
               {outgoing.map((match) => {
                 const otherProfile = match.bride_profile_id === profileId ? match.groom : match.bride;
@@ -80,7 +78,7 @@ export function ProfileMatchHistory({ profileId, matches }: ProfileMatchHistoryP
 
         {incoming.length > 0 && (
           <div>
-            <p className="text-xs font-medium text-[var(--gray-400)] uppercase tracking-wider mb-2">Shared to This Profile</p>
+            <p className="text-xs font-medium uppercase tracking-wider mb-2" style={{ color: 'var(--text-muted)' }}>Shared to This Profile</p>
             <div className="space-y-2">
               {incoming.map((match) => {
                 const isBride = profileId === match.bride_profile_id;
@@ -105,31 +103,35 @@ function MatchRow({ match, otherProfile }: { match: MatchWithProfiles; otherProf
   return (
     <Link
       href={`/admin/matches/${match.id}`}
-      className="block rounded-xl border border-[var(--gray-100)] p-3 hover:border-[var(--gold)]/30 hover:shadow-sm transition-all"
+      className="block rounded-xl border p-3 transition-all"
+      style={{ borderColor: 'var(--border-default)' }}
+      onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--gold)'; e.currentTarget.style.boxShadow = 'var(--shadow-sm)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.boxShadow = 'none'; }}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 min-w-0">
-          <p className="text-sm font-medium text-[var(--brown)] truncate">
+          <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
             {otherProfile?.full_name || 'Unknown'}
           </p>
           <Badge variant={stageBadgeVariant[match.stage] || 'default'}>
             {stageLabel(match.stage || 'shared')}
           </Badge>
           {match.is_on_hold && (
-            <Pause className="w-3 h-3 text-amber-500" />
+            <Pause className="w-3 h-3" style={{ color: 'var(--amber)' }} />
           )}
         </div>
-        <ExternalLink className="w-3.5 h-3.5 text-[var(--gray-400)] shrink-0" />
+        <ExternalLink className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--text-muted)' }} />
       </div>
-      <div className="w-full h-1.5 bg-[var(--gray-100)] rounded-full overflow-hidden">
+      <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--gray-100)' }}>
         <div
-          className={`h-full rounded-full transition-all ${
-            isTerminal ? 'bg-red-300' : percent >= 100 ? 'bg-[var(--green)]' : 'bg-[var(--gold)]'
-          }`}
-          style={{ width: `${percent}%` }}
+          className="h-full rounded-full transition-all"
+          style={{
+            width: `${percent}%`,
+            background: isTerminal ? 'var(--red)' : percent >= 100 ? 'var(--green)' : 'var(--gold)',
+          }}
         />
       </div>
-      <p className="text-xs text-[var(--gray-400)] mt-1.5">
+      <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>
         {otherProfile?.profile_id}
       </p>
     </Link>

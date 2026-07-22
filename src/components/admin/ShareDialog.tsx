@@ -71,7 +71,11 @@ export function ShareDialog({ profileId, profileName, buttonClassName = '', show
       <Modal isOpen={isOpen} onClose={handleClose} title={`Share ${profileName}`} maxWidth="max-w-md">
         {!shareLink ? (
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && <div className="p-3 rounded-xl bg-red-50 text-sm text-[var(--red)]">{error}</div>}
+            {error && (
+              <div className="p-3 rounded-xl text-sm" style={{ background: 'rgba(220,38,38,0.08)', color: 'var(--red)' }}>
+                {error}
+              </div>
+            )}
             <Input name="recipient_name" label="Recipient Name" placeholder="e.g., Rajesh Sharma" required />
             <Input name="recipient_phone" label="Recipient Phone" type="tel" placeholder="e.g., +91 9876543210" required />
             <Textarea name="notes" label="Notes (optional)" placeholder="Any notes about this share" />
@@ -79,17 +83,22 @@ export function ShareDialog({ profileId, profileName, buttonClassName = '', show
           </form>
         ) : (
           <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-xl text-sm text-[var(--green)]">
+            <div className="p-4 rounded-xl text-sm" style={{ background: 'rgba(22,163,74,0.1)', color: 'var(--green)' }}>
               Share link created! Send this to the recipient via WhatsApp.
             </div>
             <div className="flex items-center gap-2">
               <input
                 readOnly
                 value={shareLink}
-                className="flex-1 rounded-xl border border-[var(--gray-200)] px-4 py-2.5 text-sm text-[var(--brown)] bg-[var(--gray-50)]"
+                className="flex-1 rounded-xl border px-4 py-2.5 text-sm"
+                style={{
+                  background: 'var(--bg-input)',
+                  color: 'var(--text-primary)',
+                  borderColor: 'var(--border-input)',
+                }}
               />
               <Button variant="outline" size="sm" onClick={copyLink}>
-                {copied ? <Check className="w-4 h-4 text-[var(--green)]" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="w-4 h-4" style={{ color: 'var(--green)' }} /> : <Copy className="w-4 h-4" />}
               </Button>
             </div>
             <Button variant="primary" className="w-full" onClick={handleClose}>Done</Button>

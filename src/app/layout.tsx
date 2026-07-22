@@ -1,5 +1,18 @@
 import type { Metadata } from 'next';
+import { Inter, Noto_Sans_Telugu } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const notoSansTelugu = Noto_Sans_Telugu({
+  subsets: ['telugu'],
+  display: 'swap',
+  variable: '--font-noto-telugu',
+});
 
 export const metadata: Metadata = {
   title: 'Sana Rani Matrimony',
@@ -12,7 +25,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full" data-scroll-behavior="smooth">
+    <html lang="en" className={`h-full ${inter.variable} ${notoSansTelugu.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              try {
+                var theme = localStorage.getItem('theme');
+                if (!theme) {
+                  theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                document.documentElement.setAttribute('data-theme', theme);
+              } catch(e) {}
+            })();
+          `,
+        }} />
+      </head>
       <body className="min-h-full antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );

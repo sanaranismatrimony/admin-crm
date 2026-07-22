@@ -41,7 +41,7 @@ export function HeightRangeFilter({ minFeet, minInches, maxFeet, maxInches, onCh
     <FilterCapsule label={label} isActive={isActive} width="min-w-[280px]">
       <div className="space-y-3 px-1 py-1">
         <div>
-          <label className="text-[10px] font-medium text-[var(--gray-400)] uppercase tracking-wider mb-1.5 block">
+          <label className="text-[10px] font-medium uppercase tracking-wider mb-1.5 block" style={{ color: 'var(--text-muted)' }}>
             Min Height
           </label>
           <div className="flex gap-2">
@@ -64,7 +64,7 @@ export function HeightRangeFilter({ minFeet, minInches, maxFeet, maxInches, onCh
           </div>
         </div>
         <div>
-          <label className="text-[10px] font-medium text-[var(--gray-400)] uppercase tracking-wider mb-1.5 block">
+          <label className="text-[10px] font-medium uppercase tracking-wider mb-1.5 block" style={{ color: 'var(--text-muted)' }}>
             Max Height
           </label>
           <div className="flex gap-2">

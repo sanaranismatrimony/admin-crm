@@ -20,7 +20,6 @@ const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/profiles', label: 'Profiles', icon: Users },
   { href: '/admin/profiles/new', label: 'Add Profile', icon: UserPlus },
-
   { href: '/admin/shares', label: 'Shares', icon: Share2 },
   { href: '/admin/matches', label: 'Matches', icon: HeartHandshake },
   { href: '/admin/payments', label: 'Payments', icon: Wallet },
@@ -34,25 +33,34 @@ export function Sidebar() {
     <>
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-xl shadow-sm border border-[var(--gray-100)]"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-xl shadow-sm border"
+        style={{
+          background: 'var(--bg-card)',
+          borderColor: 'var(--border-default)',
+          color: 'var(--text-primary)',
+        }}
       >
-        {mobileOpen ? <X className="w-5 h-5 text-[var(--brown)]" /> : <Menu className="w-5 h-5 text-[var(--brown)]" />}
+        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
 
-      <aside className={`
-        fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-[var(--gray-100)] transform transition-transform duration-200
-        lg:translate-x-0
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 border-r transform transition-transform duration-300 lg:translate-x-0 flex flex-col ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+        style={{
+          background: 'var(--bg-sidebar)',
+          borderColor: 'var(--border-default)',
+        }}
+      >
         <div className="flex flex-col h-full">
-          <div className="p-4 border-b border-[var(--gray-100)]">
+          <div className="p-5 border-b" style={{ borderColor: 'var(--border-default)' }}>
             <Link href="/admin/dashboard" className="flex items-center gap-3">
               <div className="w-10 h-10 flex-shrink-0">
                 <img src="/logo.svg" alt="Sana Rani" className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[var(--brown)]">Sana Rani</p>
-                <p className="text-xs text-[var(--gray-400)]">Matrimony Admin</p>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Sana Rani</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Matrimony Admin</p>
               </div>
             </Link>
           </div>
@@ -65,11 +73,23 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-[var(--gold)]/10 text-[var(--gold-dark)]'
-                      : 'text-[var(--gray-500)] hover:bg-[var(--cream)] hover:text-[var(--brown)]'
-                  }`}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                  style={{
+                    background: isActive ? 'var(--gold)' : 'transparent',
+                    color: isActive ? '#fff' : 'var(--text-secondary)',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'var(--cream-dark)';
+                      e.currentTarget.style.color = 'var(--text-primary)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.color = 'var(--text-secondary)';
+                    }
+                  }}
                 >
                   <item.icon className="w-5 h-5" />
                   {item.label}
@@ -78,11 +98,20 @@ export function Sidebar() {
             })}
           </nav>
 
-          <div className="p-3 border-t border-[var(--gray-100)]">
+          <div className="p-3 border-t" style={{ borderColor: 'var(--border-default)' }}>
             <form action={adminLogout}>
               <button
                 type="submit"
-                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--gray-500)] hover:bg-red-50 hover:text-red transition-colors"
+                className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                style={{ color: 'var(--text-muted)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(220,38,38,0.08)';
+                  e.currentTarget.style.color = 'var(--red)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                }}
               >
                 <LogOut className="w-5 h-5" />
                 Logout
@@ -93,7 +122,7 @@ export function Sidebar() {
       </aside>
 
       {mobileOpen && (
-        <div className="fixed inset-0 bg-black/20 z-30 lg:hidden" onClick={() => setMobileOpen(false)} />
+        <div className="fixed inset-0 z-30 lg:hidden" style={{ background: 'var(--bg-overlay)' }} onClick={() => setMobileOpen(false)} />
       )}
     </>
   );

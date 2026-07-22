@@ -44,8 +44,15 @@ export function Dropdown({ trigger, children, align = 'start', width, className 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.97 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute z-50 mt-1.5 ${align === 'end' ? 'right-0' : 'left-0'} bg-white rounded-xl shadow-lg border border-[var(--gray-200)] overflow-hidden ${width || 'min-w-[220px]'}`}
-            onClick={() => {}}>
+            className={`absolute z-50 mt-1.5 ${align === 'end' ? 'right-0' : 'left-0'} rounded-xl border overflow-hidden`}
+            style={{
+              background: 'var(--bg-card)',
+              borderColor: 'var(--border-default)',
+              boxShadow: 'var(--shadow-lg)',
+              minWidth: width || '220px',
+            }}
+            onClick={() => {}}
+          >
             {children}
           </motion.div>
         )}
@@ -69,11 +76,22 @@ export function DropdownItem({
     <button
       type="button"
       onClick={onClick}
-      className={`w-full text-left px-3.5 py-2.5 text-sm transition-colors ${
-        active
-          ? 'bg-[var(--gold)]/10 text-[var(--gold-dark)] font-medium'
-          : 'text-[var(--gray-600)] hover:bg-[var(--gray-50)]'
-      } ${className}`}
+      className={`w-full text-left px-3.5 py-2.5 text-sm transition-colors ${className}`}
+      style={{
+        background: active ? 'rgba(212,168,83,0.12)' : 'transparent',
+        color: active ? 'var(--gold-dark)' : 'var(--text-secondary)',
+        fontWeight: active ? 500 : 400,
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'var(--gray-100)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.background = 'transparent';
+        }
+      }}
     >
       {children}
     </button>
@@ -81,5 +99,5 @@ export function DropdownItem({
 }
 
 export function DropdownSeparator() {
-  return <div className="h-px bg-[var(--gray-100)]" />;
+  return <div style={{ height: 1, background: 'var(--border-default)' }} />;
 }

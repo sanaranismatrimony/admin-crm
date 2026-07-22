@@ -25,11 +25,11 @@ const stageLabels: Record<ExtractStage, string> = {
 };
 
 const sourceConfig: Record<string, { label: string; icon: typeof Zap; color: string }> = {
-  cache: { label: 'Cache', icon: FileText, color: 'text-blue-500' },
-  rules: { label: 'Rules', icon: Cpu, color: 'text-[var(--green)]' },
-  groq: { label: 'AI', icon: Brain, color: 'text-purple-500' },
-  merged: { label: 'Rules + AI', icon: Brain, color: 'text-amber-500' },
-  vision: { label: 'Vision AI', icon: Brain, color: 'text-purple-500' },
+  cache: { label: 'Cache', icon: FileText, color: 'var(--blue)' },
+  rules: { label: 'Rules', icon: Cpu, color: 'var(--green)' },
+  groq: { label: 'AI', icon: Brain, color: 'var(--amber)' },
+  merged: { label: 'Rules + AI', icon: Brain, color: 'var(--amber)' },
+  vision: { label: 'Vision AI', icon: Brain, color: 'var(--amber)' },
 };
 
 export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
@@ -135,9 +135,9 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
     const high = fields.filter(f => f.confidence === 'high').length;
     const total = fields.filter(f => f.value !== null).length;
     const ratio = total > 0 ? high / total : 0;
-    if (ratio >= 0.7) return { text: 'High', color: 'text-[var(--green)]' };
-    if (ratio >= 0.4) return { text: 'Medium', color: 'text-amber-500' };
-    return { text: 'Low', color: 'text-red-500' };
+    if (ratio >= 0.7) return { text: 'High', color: 'var(--green)' };
+    if (ratio >= 0.4) return { text: 'Medium', color: 'var(--amber)' };
+    return { text: 'Low', color: 'var(--red)' };
   }
 
   function getLowConfidenceCount(): number {
@@ -147,52 +147,56 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
 
   const src = meta ? sourceConfig[meta.source] : null;
 
+  const dropzoneStyle: React.CSSProperties = stage === 'error'
+    ? { borderColor: 'var(--red)', background: 'rgba(220,38,38,0.06)' }
+    : stage === 'done'
+    ? { borderColor: 'var(--green)', background: 'rgba(22,163,74,0.06)' }
+    : stage && stage !== 'uploading'
+    ? { borderColor: 'var(--gold)', background: 'rgba(212,168,83,0.06)' }
+    : { borderColor: 'var(--border-input)', background: 'transparent' };
+
   return (
     <div className="space-y-3">
       <label
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
-        className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed transition-colors cursor-pointer ${
-          stage === 'error' ? 'border-red-300 bg-red-50' :
-          stage === 'done' ? 'border-[var(--green)] bg-green-50' :
-          stage && stage !== 'uploading' ? 'border-[var(--gold)] bg-[var(--gold)]/5' :
-          'border-[var(--gray-200)] hover:border-[var(--gold)] hover:bg-[var(--gold)]/5'
-        }`}
+        className="flex flex-col items-center justify-center p-6 rounded-xl border-2 border-dashed transition-colors cursor-pointer"
+        style={dropzoneStyle}
       >
         {stage === 'uploading' || stage === 'analyzing' || stage === 'extracting' ? (
           <div className="flex flex-col items-center w-full">
-            <Loader2 className="w-8 h-8 text-[var(--gold)] animate-spin mb-2" />
-            <p className="text-sm text-[var(--brown-mid)]">{stageLabels[stage]}</p>
-            {fileName && <p className="text-xs text-[var(--gray-400)] mt-1">{fileName}</p>}
-            <div className="w-full max-w-xs mt-3 h-1.5 bg-[var(--gray-100)] rounded-full overflow-hidden">
+            <Loader2 className="w-8 h-8 animate-spin mb-2" style={{ color: 'var(--gold)' }} />
+            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{stageLabels[stage]}</p>
+            {fileName && <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{fileName}</p>}
+            <div className="w-full max-w-xs mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--gray-100)' }}>
               <div
-                className="h-full bg-[var(--gold)] rounded-full transition-all duration-500"
-                style={{ width: `${progressPercent}%` }}
+                className="h-full rounded-full transition-all duration-500"
+                style={{ background: 'var(--gold)', width: `${progressPercent}%` }}
               />
             </div>
           </div>
         ) : stage === 'done' && result ? (
           <div className="flex flex-col items-center w-full">
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mb-2">
-              <Check className="w-5 h-5 text-[var(--green)]" />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center mb-2" style={{ background: 'rgba(22,163,74,0.15)' }}>
+              <Check className="w-5 h-5" style={{ color: 'var(--green)' }} />
             </div>
-            <p className="text-sm font-medium text-[var(--green)]">Extraction complete</p>
-            <p className="text-xs text-[var(--gray-500)] mt-1">{fileName}</p>
-            <div className="flex items-center gap-4 mt-2 text-xs text-[var(--gray-500)]">
+            <p className="text-sm font-medium" style={{ color: 'var(--green)' }}>Extraction complete</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{fileName}</p>
+            <div className="flex items-center gap-4 mt-2 text-xs" style={{ color: 'var(--text-muted)' }}>
               {src && (
-                <span className={`inline-flex items-center gap-1 ${src.color}`}>
+                <span className="inline-flex items-center gap-1" style={{ color: src.color }}>
                   <src.icon className="w-3 h-3" />
                   {src.label}
                 </span>
               )}
               {meta?.confidence.percentage !== undefined && (
-                <span className={meta.confidence.meetsThreshold ? 'text-[var(--green)]' : 'text-amber-500'}>
+                <span style={{ color: meta.confidence.meetsThreshold ? 'var(--green)' : 'var(--amber)' }}>
                   {meta.confidence.percentage}% confidence
                 </span>
               )}
               <span>{result.field_count} fields</span>
               {getLowConfidenceCount() > 0 && (
-                <span className="text-red-500">{getLowConfidenceCount()} need review</span>
+                <span style={{ color: 'var(--red)' }}>{getLowConfidenceCount()} need review</span>
               )}
             </div>
             <Button
@@ -208,23 +212,23 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
           </div>
         ) : stage === 'error' ? (
           <div className="flex flex-col items-center">
-            <AlertCircle className="w-8 h-8 text-red-400 mb-2" />
-            <p className="text-sm text-red-500">{stageLabels.error}</p>
-            <p className="text-xs text-[var(--gray-500)] mt-1">Try again or fill the form manually</p>
+            <AlertCircle className="w-8 h-8 mb-2" style={{ color: 'var(--red)' }} />
+            <p className="text-sm" style={{ color: 'var(--red)' }}>{stageLabels.error}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Try again or fill the form manually</p>
           </div>
         ) : (
           <>
-            <Upload className="w-8 h-8 text-[var(--gray-400)] mb-2" />
-            <p className="text-sm font-medium text-[var(--brown-mid)]">Upload biodata PDF, DOCX, or Image</p>
-            <p className="text-xs text-[var(--gray-400)] mt-1">Drag & drop or click to browse</p>
-            <p className="text-xs text-[var(--gray-400)]">AI will extract and auto-fill the form</p>
+            <Upload className="w-8 h-8 mb-2" style={{ color: 'var(--text-muted)' }} />
+            <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Upload biodata PDF, DOCX, or Image</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Drag & drop or click to browse</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>AI will extract and auto-fill the form</p>
           </>
         )}
         <input type="file" accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.webp" className="hidden" onChange={handleSelect} disabled={stage === 'uploading' || stage === 'analyzing' || stage === 'extracting'} />
       </label>
 
       {error && (
-        <div className="p-3 rounded-xl bg-amber-50 text-sm text-[var(--amber)] border border-amber-200">
+        <div className="p-3 rounded-xl text-sm" style={{ background: 'rgba(217,119,6,0.08)', color: 'var(--amber)', border: '1px solid rgba(217,119,6,0.2)' }}>
           <p>{error}</p>
           <button
             type="button"
@@ -243,10 +247,10 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
       )}
 
       {meta?.warnings && meta.warnings.length > 0 && stage === 'done' && (
-        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-          <p className="text-xs font-medium text-amber-700 mb-1">Extraction notes:</p>
+        <div className="p-3 rounded-xl" style={{ background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.2)' }}>
+          <p className="text-xs font-medium mb-1" style={{ color: 'var(--amber)' }}>Extraction notes:</p>
           {meta.warnings.map((w, i) => (
-            <p key={i} className="text-xs text-amber-600">
+            <p key={i} className="text-xs" style={{ color: 'var(--amber)' }}>
               {w.field}: {w.message}
             </p>
           ))}
@@ -255,7 +259,7 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
 
       {stage !== null && stage !== 'error' && fileName && stage !== 'uploading' && stage !== 'analyzing' && stage !== 'extracting' && (
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-[var(--green)]">
+          <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--green)' }}>
             <Check className="w-4 h-4" />
             Parsed: {fileName}
           </div>
@@ -289,7 +293,7 @@ export function BiodataUpload({ onExtracted }: BiodataUploadProps) {
         />
       )}
 
-      <p className="text-xs text-[var(--gray-400)]">
+      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
         Supported formats: PDF, DOCX, JPG, PNG, WEBP. AI extracts fields and auto-fills the form below.
       </p>
     </div>
