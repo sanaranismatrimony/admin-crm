@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_Telugu } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 
 const inter = Inter({
@@ -26,8 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full ${inter.variable} ${notoSansTelugu.variable}`} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{
+      <Script
+        id="theme-init"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{
           __html: `
             (function() {
               try {
@@ -39,8 +42,8 @@ export default function RootLayout({
               } catch(e) {}
             })();
           `,
-        }} />
-      </head>
+        }}
+      />
       <body className="min-h-full antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );
